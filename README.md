@@ -29,6 +29,25 @@ This method takes the image path, load all of them, preprocess the image, and th
 This method concurrently sends the `image_path` to the inference server, and the server will 
 load the image locally, preprocess the image, and adaptively batch the inference. 
 
+code:
+```python
+# warm up
+with torch.no_grad():
+    _ = model.encode_image(preprocess(Image.open('/home/ec2-user/SageMaker/bentoml/coco.jpg')).unsqueeze(0).to(torch.float16).to("cuda"))
+
+start = timer()
+for i in range(0,1000,64):
+    batch_images_path = total_images_path[i:min(i+64,999)]
+    
+    batch_images = [Image.open(i) for i in batch_images_path]
+    processed_image = torch.stack([preprocess(i) for i in batch_images]).to(torch.float16).to("cuda")
+    
+    with torch.no_grad():
+        _ = model.encode_image(processed_image).cpu().numpy()
+time = timer() - start
+print(f"Throughput: {60/time * 1000}.")
+```
+
 ### Results
 
 The metric `througput` is `the number of inferenced images per minute`. Results can be found
