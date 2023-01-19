@@ -23,12 +23,6 @@ To boost the throughput, all the clip models are in `torch.float16` precision.
 
 This method takes the image path, load all of them, preprocess the image, and then inference all the images in a bach_manner.
 
-
-#### Method 2: Inference Server - BentoML
-
-This method concurrently sends the `image_path` to the inference server, and the server will 
-load the image locally, preprocess the image, and adaptively batch the inference. 
-
 code:
 ```python
 # warm up
@@ -47,6 +41,13 @@ for i in range(0,1000,64):
 time = timer() - start
 print(f"Throughput: {60/time * 1000}.")
 ```
+
+
+#### Method 2: Inference Server - BentoML
+
+This method concurrently sends the `image_path` to the inference server, and the server will 
+load the image locally, preprocess the image, and adaptively batch the inference. 
+
 
 ### Results
 
